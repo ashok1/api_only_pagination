@@ -6,19 +6,9 @@ require_relative "api_only_pagination/configuration"
 require_relative "api_only_pagination/paginate"
 require_relative "api_only_pagination/pagination"
 require_relative "api_only_pagination/paginated_data"
+require_relative "api_only_pagination/active_record_paginate"
 
 module ApiOnlyPagination
-  def paginate(page, per_page)
-    pagination = ApiOnlyPagination::Pagination.new(self, { page: page, per_page: per_page })
-    meta_data = pagination.metadata
-    ApiOnlyPagination::PaginatedData
-      .new(data: pagination.results,
-           per_page: per_page,
-           current_page: page,
-           total_pages: meta_data.total_pages,
-           total_records: meta_data.count)
-  end
-
   class << self
     def configuration
       @configuration ||= Configuration.new
@@ -35,5 +25,6 @@ module ApiOnlyPagination
 end
 
 ActiveSupport.on_load(:active_record) do
-  include ApiOnlyPagination
+  include ApiOnlyPagination::ActiveRecordPaginate
+  ActiveRecord::Relation.include(ApiOnlyPagination::ActiveRecordPaginate)
 end

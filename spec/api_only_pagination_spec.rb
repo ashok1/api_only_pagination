@@ -5,6 +5,6 @@ RSpec.describe ApiOnlyPagination do
     expect(ApiOnlyPagination::VERSION).not_to be nil
   end
 
-  context "paginate" do 
+  context "paginate" do
   end
 end

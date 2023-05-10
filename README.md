@@ -1,24 +1,43 @@
 # ApiOnlyPagination
-
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/api_only_pagination`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-## Installation
-
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
-
+Lightweight pagination gem that works only with Activerecord for Api only applications
+ ## Installation
+To install this gem,
+```
+   $ gem install api_only_pagination
+```
+or add it to your Gemfile
+```
+   gem 'api_only_pagination'
+```
 ## Usage
 
-TODO: Write usage instructions here
+Configure your pagination adding api_only_pagination.rb file in config/initializers unless it will take default configurations.
+ 
+ ```
+ ApiOnlyPagination.configure do |config|
+   config.default_page_size = 3
+   config.max_per_page = 100
+    config.default_page = 1
+ end
+ ```
+
+ Now you can call chain .do_paginate(page, per_page) to your activerecord query.
+```
+ response = User.do_paginate(1,20)
+ ```
+
+ The response will be 
+
+      
+         { 
+         "data" => [], 
+         "per_page" => 3,
+         "current_page" => 1,
+         "total_pages" => 2,
+         "total_records" => 5
+         }
+         
+
 
 ## Development
 
