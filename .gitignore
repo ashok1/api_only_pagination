@@ -8,3 +8,4 @@
 /tmp/
 .DS_Store
 lib/.DS_Store
+api_only_pagination-*
