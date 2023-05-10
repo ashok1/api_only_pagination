@@ -17,7 +17,7 @@ Configure your pagination adding api_only_pagination.rb file in config/initializ
  ApiOnlyPagination.configure do |config|
    config.default_page_size = 3
    config.max_per_page = 100
-    config.default_page = 1
+   config.default_page = 1
  end
  ```
 
