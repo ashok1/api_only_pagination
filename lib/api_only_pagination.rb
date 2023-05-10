@@ -1,17 +1,22 @@
 # frozen_string_literal: true
 
+require "active_record"
 require_relative "api_only_pagination/version"
 require_relative "api_only_pagination/configuration"
 require_relative "api_only_pagination/paginate"
 require_relative "api_only_pagination/pagination"
+require_relative "api_only_pagination/paginated_data"
 
 module ApiOnlyPagination
-  def paginated_response(collection,
-                         page = ApiOnlyPagination.configuration.default_page,
-                         per_page = ApiOnlyPagination.configuration.default_page_size)
-    pagination = ApiOnlyPagination::Pagination.new(collection, { page: page, per_page: per_page })
+  def paginate(page, per_page)
+    pagination = ApiOnlyPagination::Pagination.new(self, { page: page, per_page: per_page })
     meta_data = pagination.metadata
-    meta_data.as_json.merge({ data: pagination.results })
+    ApiOnlyPagination::PaginatedData
+      .new(data: pagination.results,
+           per_page: per_page,
+           current_page: page,
+           total_pages: meta_data.total_pages,
+           total_records: meta_data.count)
   end
 
   class << self
@@ -27,4 +32,8 @@ module ApiOnlyPagination
       @configuration = Configuration.new
     end
   end
+end
+
+ActiveSupport.on_load(:active_record) do
+  include ApiOnlyPagination
 end

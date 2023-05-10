@@ -6,7 +6,7 @@ module ApiOnlyPagination
 
     def initialize(collection, params = {})
       @collection = collection
-      @params = params.merge(count: collection.size)
+      @params = params.merge(count: collection.count)
     end
 
     def metadata

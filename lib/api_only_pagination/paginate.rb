@@ -7,7 +7,8 @@ module ApiOnlyPagination
     def initialize(page, per_page, count)
       @page     = (page || ApiOnlyPagination.configuration.default_page).to_i
       @count    = count
-      @per_page = [(per_page.to_i || ApiOnlyPagination.configuration.default_page_size), ApiOnlyPagination.configuration.max_per_page].min
+      @per_page = [(per_page.to_i || ApiOnlyPagination.configuration.default_page_size),
+                   ApiOnlyPagination.configuration.max_per_page].min
     end
 
     def offset
