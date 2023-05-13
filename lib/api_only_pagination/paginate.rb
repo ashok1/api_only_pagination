@@ -9,6 +9,13 @@ module ApiOnlyPagination
       @count    = count
       @per_page = [(per_page.to_i || ApiOnlyPagination.configuration.default_page_size),
                    ApiOnlyPagination.configuration.max_per_page].min
+
+      validate_params
+    end
+
+    def validate_params
+      @page = @page.zero? ? ApiOnlyPagination.configuration.default_page : @page
+      @per_page = @per_page.zero? ? ApiOnlyPagination.configuration.default_page_size : @per_page
     end
 
     def offset
