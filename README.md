@@ -23,7 +23,7 @@ Configure your pagination adding api_only_pagination.rb file in config/initializ
 
  Now you can call chain .do_paginate(page, per_page) to your activerecord query.
 ```
- response = User.paginate(1,20)
+ response = User.do_paginate(1,20)
  ```
 
  The response will be 
