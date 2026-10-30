@@ -6,6 +6,8 @@
 - **Breaking:** remove the `paginate` alias, which clashed with will_paginate; use `do_paginate` or `paginated_response`
 - Add `next_page` and `previous_page` to the response
 - Add `PaginatedData#to_h` and an explicit `#as_json`; serializer options such as `only:` apply to the records in `data`
+- Add `render_paginated` controller helper (ActionController::Base and ::API) that reads `page`/`per_page` from params, with opt-in `X-Total-Count`/`Link` pagination headers (`pagination_headers` setting)
+- Note: Rails 8.1 does not load on Ruby 3.3.0 because of a Ruby parser bug fixed in 3.3.1; use a later 3.3.x
 
 ## [0.1.5] - 2026-10-30
 

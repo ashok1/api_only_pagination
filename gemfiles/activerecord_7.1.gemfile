@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gemspec path: ".."
 
+gem "actionpack", "~> 7.1.0"
 gem "activerecord", "~> 7.1.0"
 gem "rake", "~> 13.0"
 gem "sqlite3", "~> 1.6", ">= 1.6.6"

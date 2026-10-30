@@ -22,6 +22,7 @@ ApiOnlyPagination.configure do |config|
   config.default_page_size = 20  # per_page when none (or an invalid value) is given
   config.max_per_page = 100      # upper limit for per_page
   config.default_page = 1        # page when none (or an invalid value) is given
+  config.pagination_headers = false  # see "In controllers"
 end
 ```
 
@@ -49,6 +50,30 @@ render json: result
 ```
 
 `next_page` and `previous_page` are `null` on the last and first page. Serializer options apply to the records, so `render json: result, only: [:id, :name]` limits the fields in `data` and keeps the pagination fields. Use `result.to_h` for a symbol-keyed hash, or read the attributes directly (`result.data`, `result.total_pages`, ...).
+
+### In controllers
+
+`render_paginated` reads `page` and `per_page` from params, paginates, renders the JSON above and returns the result:
+
+```ruby
+class UsersController < ApplicationController
+  def index
+    render_paginated User.where(active: true).order(:id)
+  end
+end
+```
+
+Other options go to `render`, so `render_paginated scope, only: [:id, :name], status: :ok` works. Pass `page:` or `per_page:` to override params.
+
+The helper can also set pagination headers: `X-Total-Count`, `X-Total-Pages`, `X-Per-Page`, `X-Page`, and a `Link` header with `first`/`prev`/`next`/`last` URLs that keep the request's other query params. Turn them on for one call with `render_paginated scope, pagination_headers: true`, or for every call:
+
+```ruby
+ApiOnlyPagination.configure do |config|
+  config.pagination_headers = true
+end
+```
+
+If browser clients need to read these headers in a cross-origin setup, add them to `expose` in your CORS config.
 
 ### Upgrading from 0.1.x
 

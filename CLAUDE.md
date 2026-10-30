@@ -33,7 +33,9 @@ The call flow spans several small files in `lib/api_only_pagination/`:
 4. **`Paginate`**: the metadata and normalization logic. Any page/per_page value that isn't a positive integer (nil, zero, negative, non-numeric) falls back to the configured default, and `per_page` is capped at `max_per_page`. It also computes `offset`, `total_pages`, and next/previous helpers.
 5. **`PaginatedData`**: holds `data`, `per_page`, `current_page`, `total_pages`, `total_records`, `next_page` and `previous_page`. Its `as_json` defines the public JSON shape documented in the README, and passes serializer options (`only:`, `except:` ...) through to the records only. Changing that shape is a breaking change.
 
-**Configuration** (`Configuration` + `ApiOnlyPagination.configure`/`.reset`): `default_page_size` (20), `max_per_page` (100), `default_page` (1). Values are read when each call runs, so changes take effect right away.
+6. **`Controller`** (`render_paginated`): included through `ActiveSupport.on_load(:action_controller)`, so the gem never requires ActionPack itself; ActionPack is only a test dependency. Its methods are private so they can't become routable actions. The optional headers include a `Link` header built from `request.query_parameters`.
+
+**Configuration** (`Configuration` + `ApiOnlyPagination.configure`/`.reset`): `default_page_size` (20), `max_per_page` (100), `default_page` (1), `pagination_headers` (false). Values are read when each call runs, so changes take effect right away.
 
 ## Style
 
