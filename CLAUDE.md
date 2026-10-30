@@ -1,0 +1,40 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+`api_only_pagination` is a small Ruby gem that adds offset pagination to ActiveRecord models and relations for API-only apps. It returns a plain response object (data + page metadata) instead of view helpers. Depends on `activerecord >= 5.0`; targets Ruby >= 2.6.
+
+## Commands
+
+```bash
+bin/setup                         # install dependencies
+bin/console                       # IRB with the gem loaded
+bundle exec rake                  # specs + RuboCop (what CI runs)
+bundle exec rubocop               # lint
+bundle exec rspec                 # run specs
+bundle exec rspec spec/api_only_pagination_spec.rb:13   # single example
+bundle exec rake install          # install gem locally
+bundle exec rake release          # tag + push to rubygems (bump lib/api_only_pagination/version.rb first)
+```
+
+Specs run against an in-memory SQLite database; `spec/spec_helper.rb` defines the schema and a `User` model, and resets records and configuration before each example.
+
+CI (`.github/workflows/ci.yml`) runs specs against every Gemfile in `gemfiles/` (one per ActiveRecord version) on several Rubies. To reproduce one locally: `BUNDLE_GEMFILE=gemfiles/activerecord_7.2.gemfile bundle install && BUNDLE_GEMFILE=gemfiles/activerecord_7.2.gemfile bundle exec rspec`. When adding a Rails version, add a gemfile and a matrix entry.
+
+## Architecture
+
+The call flow spans several small files in `lib/api_only_pagination/`:
+
+1. **Hooking into ActiveRecord** (`lib/api_only_pagination.rb`): an `ActiveSupport.on_load(:active_record)` block includes `ActiveRecordPaginate` into `ActiveRecord::Base`. Chained calls like `User.where(...).do_paginate` still work, because a relation passes unknown methods to its model class while applying its own scope, so `all` inside the method returns the scoped relation.
+2. **`ActiveRecordPaginate`**: defines three aliases, `do_paginate`, `paginate`, and `paginated_response`, each taking `(page, per_page)`. They wrap `all` in a `Pagination` and build a `PaginatedData`.
+3. **`Pagination`**: runs `collection.count(:all)` once when it's constructed (for grouped relations it counts the groups), then applies `limit`/`offset` from the metadata in `results`. `results` is still a lazy relation.
+4. **`Paginate`**: the metadata and normalization logic. Any page/per_page value that isn't a positive integer (nil, zero, negative, non-numeric) falls back to the configured default, and `per_page` is capped at `max_per_page`. It also computes `offset`, `total_pages`, and next/previous helpers.
+5. **`PaginatedData`**: a plain object with `data`, `per_page`, `current_page`, `total_pages`, and `total_records`. The README shows the result as a hash, but it's actually this object.
+
+**Configuration** (`Configuration` + `ApiOnlyPagination.configure`/`.reset`): `default_page_size` (20), `max_per_page` (100), `default_page` (1). Values are read when each call runs, so changes take effect right away.
+
+## Style
+
+RuboCop (`.rubocop.yml`): double-quoted strings, max line length 120, `TargetRubyVersion` 2.6. Every file starts with `# frozen_string_literal: true`.
