@@ -9,3 +9,5 @@
 .DS_Store
 lib/.DS_Store
 api_only_pagination-*
+.rspec_status
+/gemfiles/*.lock

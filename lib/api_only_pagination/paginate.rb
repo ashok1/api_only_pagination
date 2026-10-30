@@ -1,27 +1,19 @@
 # frozen_string_literal: true
 
 module ApiOnlyPagination
+  # Normalizes page/per_page input and computes page metadata from a record count
   class Paginate
     attr_reader :page, :count, :per_page
 
     def initialize(page, per_page, count)
-      @page     = (page || ApiOnlyPagination.configuration.default_page).to_i
+      config    = ApiOnlyPagination.configuration
+      @page     = positive_integer(page) || config.default_page
       @count    = count
-      @per_page = [(per_page.to_i || ApiOnlyPagination.configuration.default_page_size),
-                   ApiOnlyPagination.configuration.max_per_page].min
-
-      validate_params
-    end
-
-    def validate_params
-      @page = @page.zero? ? ApiOnlyPagination.configuration.default_page : @page
-      @per_page = @per_page.zero? ? ApiOnlyPagination.configuration.default_page_size : @per_page
+      @per_page = [positive_integer(per_page) || config.default_page_size, config.max_per_page].min
     end
 
     def offset
-      return 0 if page == 1
-
-      per_page * (page.to_i - 1)
+      per_page * (page - 1)
     end
 
     def next_page
@@ -41,7 +33,7 @@ module ApiOnlyPagination
     end
 
     def last_page?
-      page == total_pages
+      page >= total_pages
     end
 
     def first_page?
@@ -50,6 +42,14 @@ module ApiOnlyPagination
 
     def total_pages
       (count / per_page.to_f).ceil
+    end
+
+    private
+
+    # nil, zero, negative and non-numeric values (e.g. "abc") all become nil
+    def positive_integer(value)
+      integer = value.to_i
+      integer if integer.positive?
     end
   end
 end
