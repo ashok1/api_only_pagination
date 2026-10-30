@@ -8,6 +8,7 @@ require_relative "api_only_pagination/pagination"
 require_relative "api_only_pagination/paginated_data"
 require_relative "api_only_pagination/active_record_paginate"
 
+# Offset pagination for ActiveRecord that returns data plus page metadata for API responses
 module ApiOnlyPagination
   class << self
     def configuration
@@ -26,5 +27,4 @@ end
 
 ActiveSupport.on_load(:active_record) do
   include ApiOnlyPagination::ActiveRecordPaginate
-  ActiveRecord::Relation.include(ApiOnlyPagination::ActiveRecordPaginate)
 end
