@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    api_only_pagination (0.1.5)
-      activerecord (>= 5.0)
+    api_only_pagination (0.2.0)
+      activerecord (>= 6.1)
 
 GEM
   remote: https://rubygems.org/

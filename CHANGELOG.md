@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+- **Breaking:** require Ruby >= 3.2 and ActiveRecord >= 6.1 (the versions CI tests)
+- **Breaking:** remove the `paginate` alias, which clashed with will_paginate; use `do_paginate` or `paginated_response`
+- Add `next_page` and `previous_page` to the response
+- Add `PaginatedData#to_h` and an explicit `#as_json`; serializer options such as `only:` apply to the records in `data`
+
 ## [0.1.5] - 2026-10-30
 
 - Fix: negative `page`/`per_page` values produced invalid SQL; any value that isn't a positive integer now falls back to the configured default

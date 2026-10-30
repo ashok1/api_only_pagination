@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "pagination with api response only"
   spec.homepage = "https://github.com/ashok1/api_only_pagination"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.add_dependency "activerecord", ">= 5.0"
+  spec.add_dependency "activerecord", ">= 6.1"
   spec.add_development_dependency "rspec", "~> 3.6"
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
